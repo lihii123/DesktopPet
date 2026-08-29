@@ -6,6 +6,7 @@
 """
 import math
 import os
+import sys
 from dataclasses import dataclass, field
 from typing import Tuple, List
 
@@ -64,14 +65,18 @@ class PetRenderer:
 
     def __init__(self, asset_dir=None):
         if asset_dir is None:
-            # 尝试多个可能的资源目录
-            candidates = [
-                "assets",
-                os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets"),
-            ]
+            # PyInstaller 打包后资源在 _MEIPASS 临时目录
+            meipass = getattr(sys, '_MEIPASS', None)
+            if meipass:
+                candidates = [os.path.join(meipass, "assets")]
+            else:
+                project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                candidates = [
+                    "assets",
+                    os.path.join(project_root, "assets"),
+                ]
             for d in candidates:
-                p = os.path.join(d, "pet.png")
-                if os.path.exists(p):
+                if os.path.exists(os.path.join(d, "pet.png")):
                     asset_dir = d
                     break
         self.pixmap = QPixmap(os.path.join(asset_dir, "pet.png")) if asset_dir else QPixmap()
@@ -82,11 +87,14 @@ class PetRenderer:
         p.scale(scale, scale)
         p.setRenderHint(QPainter.SmoothPixmapTransform, True)
         p.setRenderHint(QPainter.Antialiasing, True)
-        # 全局翻面
+        # 只有角色本体翻面（表情叠加层随角色一起翻）
+        p.save()
         if pose.flip < 0:
             p.translate(CANVAS_W, 0)
             p.scale(-1, 1)
         self._draw_character(p, pose)
+        p.restore()
+        # 粒子和气泡不翻面，文字始终正向显示
         self._draw_particles(p, pose.particles)
         if pose.bubble_text:
             self._draw_bubble(p, pose)

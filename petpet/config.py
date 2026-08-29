@@ -14,7 +14,7 @@ CONFIG_PATH = os.path.join(_BASE, "config.json")
 
 DEFAULT_CONFIG = {
     "pet_name": "阿酷",
-    "scale": 1.0,                       # 宠物显示倍率
+    "scale": 0.25,                      # 宠物显示倍率（0.25 = 原尺寸1/4）
     "hotkeys": {
         "toggle_clickthrough": "ctrl+alt+p",   # 点击穿透开关
         "toggle_hide": "ctrl+alt+h",           # 隐藏/显示
