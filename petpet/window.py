@@ -128,10 +128,10 @@ class PetWindow(QWidget):
 
     def _update_hover(self, cp):
         pet = self.pet
-        # 交互范围：宠物身体大致区域
-        x0 = pet.x - 95 * pet.scale
-        x1 = pet.x + 95 * pet.scale
-        y0 = pet.y - 300 * pet.scale
+        # 交互范围：贴图身体大致区域（280x425）
+        x0 = pet.x - 140 * pet.scale
+        x1 = pet.x + 140 * pet.scale
+        y0 = pet.y - 420 * pet.scale
         y1 = pet.y + 5 * pet.scale
         pet._hovering = (x0 <= cp[0] <= x1 and y0 <= cp[1] <= y1)
 

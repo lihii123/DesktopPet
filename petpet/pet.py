@@ -15,7 +15,7 @@ from . import dialogue
 GRAVITY = 2600.0       # 像素/秒²
 BOUNCE = 0.42          # 落地回弹系数
 WALK_SPEED = 52.0      # 像素/秒
-HEAD_ABOVE_FEET = 204.0  # 头中心距脚底（本地 430-214=216 附近）
+HEAD_ABOVE_FEET = 257.0  # 头中心距脚底（贴图版：脚底427 - 头中心约170）
 
 SINGLE_CLICK_EXPRS = ["wink", "pout", "surprised"]
 DOUBLE_CLICK_EXPRS = ["happy", "love"]
