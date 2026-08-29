@@ -1,0 +1,9 @@
+# 运行依赖（Windows 上安装，Linux 开发验证同样适用）
+PyQt5>=5.15.9
+psutil>=5.9.0
+pywin32>=305 ; sys_platform == "win32"
+keyboard>=0.13.5 ; sys_platform == "win32"
+Pillow>=9.0
+
+# 打包依赖（仅构建 .exe 时需要，见 build.bat）
+# pyinstaller>=6.0
