@@ -7,12 +7,13 @@
 import math
 import os
 import sys
+import base64
 from dataclasses import dataclass, field
 from typing import Tuple, List
 
 from PyQt5.QtCore import Qt, QPointF, QRectF
 from PyQt5.QtGui import (QPainter, QColor, QPen, QBrush, QPainterPath,
-                         QFont, QFontMetricsF, QPixmap)
+                         QFont, QFontMetricsF, QPixmap, QImage)
 
 CANVAS_W = 300
 CANVAS_H = 430
@@ -64,22 +65,31 @@ class PetRenderer:
     """贴图渲染器。render(painter, pose) 在 300x430 画布内绘制宠物。"""
 
     def __init__(self, asset_dir=None):
+        self.pixmap = QPixmap()
+        # 优先从 base64 内嵌数据加载（最可靠，打包后一定能找到）
+        try:
+            from .pet_image import PET_PNG_B64
+            img_data = base64.b64decode(PET_PNG_B64)
+            img = QImage.fromData(img_data, "PNG")
+            if not img.isNull():
+                self.pixmap = QPixmap.fromImage(img)
+                return
+        except Exception:
+            pass
+        # 备用：从文件路径加载
         if asset_dir is None:
-            # PyInstaller 打包后资源在 _MEIPASS 临时目录
             meipass = getattr(sys, '_MEIPASS', None)
             if meipass:
                 candidates = [os.path.join(meipass, "assets")]
             else:
                 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                candidates = [
-                    "assets",
-                    os.path.join(project_root, "assets"),
-                ]
+                candidates = ["assets", os.path.join(project_root, "assets")]
             for d in candidates:
                 if os.path.exists(os.path.join(d, "pet.png")):
                     asset_dir = d
                     break
-        self.pixmap = QPixmap(os.path.join(asset_dir, "pet.png")) if asset_dir else QPixmap()
+        if asset_dir:
+            self.pixmap = QPixmap(os.path.join(asset_dir, "pet.png"))
 
     # ---------------- 入口 ----------------
     def render(self, p: QPainter, pose: Pose, scale: float = 1.0):
